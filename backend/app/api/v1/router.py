@@ -12,6 +12,9 @@ from app.payments.router import router as payments_router
 from app.shipping.router import router as shipping_router
 from app.reviews.router import router as reviews_router
 from app.inventory.router import router as inventory_router
+from app.vendors.router import router as vendors_router
+from app.notifications.router import router as notifications_router
+from app.admin.router import router as admin_router
 
 api_router = APIRouter()
 
@@ -35,3 +38,8 @@ api_router.include_router(payments_router)
 api_router.include_router(shipping_router)
 api_router.include_router(reviews_router)
 api_router.include_router(inventory_router)
+
+# Marketplace & Governance
+api_router.include_router(vendors_router)
+api_router.include_router(notifications_router)
+api_router.include_router(admin_router)
