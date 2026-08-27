@@ -7,10 +7,11 @@ logger = logging.getLogger(__name__)
 
 
 class EventType(str, Enum):
-    # Order Events
+    # Order & Shipping Events
     ORDER_CREATED = "ORDER_CREATED"
     ORDER_CONFIRMED = "ORDER_CONFIRMED"
     ORDER_CANCELLED = "ORDER_CANCELLED"
+    SHIPMENT_CREATED = "SHIPMENT_CREATED"
     ORDER_SHIPPED = "ORDER_SHIPPED"
     ORDER_DELIVERED = "ORDER_DELIVERED"
     RETURN_REQUESTED = "RETURN_REQUESTED"

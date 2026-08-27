@@ -7,6 +7,11 @@ from app.search.router import router as search_router
 from app.cart.router import router as cart_router
 from app.wishlist.router import router as wishlist_router
 from app.coupons.router import router as coupons_router
+from app.orders.router import router as orders_router
+from app.payments.router import router as payments_router
+from app.shipping.router import router as shipping_router
+from app.reviews.router import router as reviews_router
+from app.inventory.router import router as inventory_router
 
 api_router = APIRouter()
 
@@ -19,7 +24,14 @@ api_router.include_router(categories_router)
 api_router.include_router(products_router)
 api_router.include_router(search_router)
 
-# Shopping & Promotions
+# Shopping Experience
 api_router.include_router(cart_router)
 api_router.include_router(wishlist_router)
 api_router.include_router(coupons_router)
+
+# Commerce Engine
+api_router.include_router(orders_router)
+api_router.include_router(payments_router)
+api_router.include_router(shipping_router)
+api_router.include_router(reviews_router)
+api_router.include_router(inventory_router)
