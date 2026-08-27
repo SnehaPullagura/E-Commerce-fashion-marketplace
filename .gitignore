@@ -19,6 +19,7 @@ dist/
 .turbo/
 .eslintcache
 *.tsbuildinfo
+*.zip
 
 # Environment variables
 .env
