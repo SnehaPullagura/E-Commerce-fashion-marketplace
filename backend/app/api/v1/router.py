@@ -16,6 +16,7 @@ from app.vendors.router import router as vendors_router
 from app.notifications.router import router as notifications_router
 from app.admin.router import router as admin_router
 from app.recommendations.router import router as recommendations_router
+from app.analytics.router import router as analytics_router
 
 api_router = APIRouter()
 
@@ -47,3 +48,6 @@ api_router.include_router(admin_router)
 
 # Fashion Intelligence & Recommendations
 api_router.include_router(recommendations_router)
+
+# Business Intelligence & Analytics
+api_router.include_router(analytics_router)
