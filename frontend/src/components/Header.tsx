@@ -99,36 +99,46 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* Wishlist */}
-            <button className="relative p-2 text-gray-700 hover:text-black transition">
+            <Link href="/shop" className="relative p-2 text-gray-700 hover:text-black transition" title="Explore Wishlist Collection">
               <Heart size={22} />
               {wishlistCount > 0 && (
                 <span className="absolute top-1 right-1 bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   {wishlistCount}
                 </span>
               )}
-            </button>
+            </Link>
 
             {/* Shopping Cart */}
-            <button className="relative p-2 text-gray-700 hover:text-black transition">
+            <Link href="/cart" className="relative p-2 text-gray-700 hover:text-black transition" title="View Shopping Bag">
               <ShoppingBag size={22} />
               {cartCount > 0 && (
                 <span className="absolute top-1 right-1 bg-brand-900 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   {cartCount}
                 </span>
               )}
-            </button>
+            </Link>
 
-            {/* User Account / Vendor Portals */}
-            <div className="flex items-center gap-2 border-l pl-3 border-gray-200">
+            {/* User Account / Vendor & Admin Portals */}
+            <div className="flex items-center gap-3 border-l pl-3 border-gray-200">
               <a
-                href="/vendor"
-                className="hidden xl:inline-block text-xs font-medium text-gray-600 hover:text-black transition"
+                href="http://localhost:3002"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden xl:inline-block text-xs font-semibold text-brand-900 bg-brand-50 hover:bg-brand-100 px-2.5 py-1 rounded transition"
               >
-                Sell on Atelier
+                Vendor Portal ↗
               </a>
-              <button className="p-2 text-gray-700 hover:text-black transition">
+              <a
+                href="http://localhost:3003"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden xl:inline-block text-xs font-semibold text-gray-700 hover:text-black transition"
+              >
+                Admin ↗
+              </a>
+              <Link href="/cart" className="p-2 text-gray-700 hover:text-black transition" title="Account / Bag">
                 <UserIcon size={22} />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -138,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({
           {navCategories.map((item) => (
             <Link
               key={item.name}
-              href={item.href}
+              href="/shop"
               className="hover:text-brand-900 hover:underline decoration-2 underline-offset-8 transition"
             >
               {item.name}
