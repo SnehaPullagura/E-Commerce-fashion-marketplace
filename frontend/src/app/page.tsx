@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard, ProductCardData } from "@/components/ProductCard";
@@ -228,16 +229,17 @@ export default function HomePage() {
               <div className="text-xs font-bold uppercase tracking-widest text-brand-700">Styling Guidance</div>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-gray-950 mt-1">Shop by Occasion</h2>
             </div>
-            <a href="#all" className="text-xs font-semibold text-brand-900 hover:underline flex items-center gap-1">
+            <Link href="/shop" className="text-xs font-semibold text-brand-900 hover:underline flex items-center gap-1">
               View All Occasions <ArrowRight size={14} />
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {OCCASIONS_LIST.map((occ) => (
-              <div
+              <Link
                 key={occ.name}
-                className="group relative rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer shadow-md hover:shadow-xl transition-all"
+                href="/shop"
+                className="group relative rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer shadow-md hover:shadow-xl transition-all block"
               >
                 <img
                   src={occ.image}
@@ -252,14 +254,19 @@ export default function HomePage() {
                     {occ.name}
                   </h3>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
 
         {/* 3. Complete-the-Look Outfit Engine Widget */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <CompleteTheLookWidget outfitData={sampleOutfit} />
+          <CompleteTheLookWidget
+            outfitData={sampleOutfit}
+            onAddBundleToCart={() => {
+              window.location.href = "/cart";
+            }}
+          />
         </section>
 
         {/* 4. Curated Trending Catalog with Live Filters */}
@@ -296,7 +303,13 @@ export default function HomePage() {
           {/* Product Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {products.map((prod) => (
-              <ProductCard key={prod.id} product={prod} />
+              <ProductCard
+                key={prod.id}
+                product={prod}
+                onAddToCart={() => {
+                  window.location.href = "/cart";
+                }}
+              />
             ))}
           </div>
         </section>
