@@ -4,6 +4,9 @@ from app.users.router import router as users_router
 from app.categories.router import router as categories_router
 from app.products.router import router as products_router
 from app.search.router import router as search_router
+from app.cart.router import router as cart_router
+from app.wishlist.router import router as wishlist_router
+from app.coupons.router import router as coupons_router
 
 api_router = APIRouter()
 
@@ -11,9 +14,12 @@ api_router = APIRouter()
 api_router.include_router(auth_router)
 api_router.include_router(users_router)
 
-# Fashion Catalog
+# Fashion Catalog & Discovery
 api_router.include_router(categories_router)
 api_router.include_router(products_router)
-
-# Discovery & Search
 api_router.include_router(search_router)
+
+# Shopping & Promotions
+api_router.include_router(cart_router)
+api_router.include_router(wishlist_router)
+api_router.include_router(coupons_router)
