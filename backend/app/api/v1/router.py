@@ -1,23 +1,9 @@
 from fastapi import APIRouter
+from app.authentication.router import router as auth_router
+from app.users.router import router as users_router
 
 api_router = APIRouter()
 
-# Submodules will be registered here as they are implemented:
-# - auth
-# - users
-# - products
-# - categories
-# - search
-# - cart
-# - wishlist
-# - orders
-# - payments
-# - shipping
-# - inventory
-# - reviews
-# - coupons
-# - vendors
-# - notifications
-# - recommendations
-# - analytics
-# - admin
+# Authentication & Users
+api_router.include_router(auth_router)
+api_router.include_router(users_router)
