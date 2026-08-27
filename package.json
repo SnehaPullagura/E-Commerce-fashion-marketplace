@@ -1,0 +1,28 @@
+{
+  "name": "fashion-marketplace-monorepo",
+  "version": "1.0.0",
+  "description": "Multi-Vendor Haute Couture Fashion Marketplace Platform",
+  "private": true,
+  "scripts": {
+    "dev:backend": "uvicorn backend.app.main:app --reload --port 8000",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:vendor": "npm run dev --prefix vendor-dashboard",
+    "dev:admin": "npm run dev --prefix admin-dashboard",
+    "build": "npm run build --prefix frontend && npm run build --prefix vendor-dashboard && npm run build --prefix admin-dashboard",
+    "test": "pytest backend/tests/ -v",
+    "seed": "python backend/scripts/seed_data.py"
+  },
+  "keywords": [
+    "fashion",
+    "marketplace",
+    "multi-vendor",
+    "ecommerce",
+    "fastapi",
+    "react",
+    "nextjs"
+  ],
+  "author": "Fashion Marketplace Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
