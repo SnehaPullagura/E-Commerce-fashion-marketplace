@@ -17,6 +17,8 @@ async def test_dpp_passport_generation():
     assert passport.product_id == "prod_silk_blouse_99"
     assert passport.carbon_footprint_kg_co2e > 0
     assert passport.repairability_score >= 8.0
+    assert passport.sustainability_grade in ["A+", "A", "B", "C", "D"]
+    assert "GOTS Organic" in passport.certification_badges
     assert len(passport.provenance_hash) == 64
     assert "https://" in passport.verification_qr_uri
 

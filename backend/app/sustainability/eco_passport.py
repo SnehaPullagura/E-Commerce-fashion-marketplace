@@ -35,6 +35,8 @@ class DigitalProductPassport(BaseModel):
     recycled_content_pct: float
     carbon_footprint_kg_co2e: float
     water_usage_liters: float
+    sustainability_grade: str = "A" # A+, A, B, C, D
+    certification_badges: List[str] = []
     repairability_score: float = Field(..., ge=1.0, le=10.0)
     durability_cycles: int = 50  # Wash cycles before structural degradation
     recycling_instructions: str
@@ -44,6 +46,33 @@ class DigitalProductPassport(BaseModel):
 
 
 class DPPEngine:
+    @staticmethod
+    def calculate_sustainability_grade(co2_kg: float, water_liters: float, recycled_pct: float) -> str:
+        if co2_kg < 3.0 and water_liters < 150.0 and recycled_pct >= 40.0:
+            return "A+"
+        elif co2_kg < 6.0 and water_liters < 250.0 and recycled_pct >= 20.0:
+            return "A"
+        elif co2_kg < 10.0 and water_liters < 400.0:
+            return "B"
+        elif co2_kg < 15.0:
+            return "C"
+        return "D"
+
+    @staticmethod
+    def extract_certification_badges(cert: SustainabilityCertifications) -> List[str]:
+        badges = []
+        if cert.gots_certified:
+            badges.append("GOTS Organic")
+        if cert.oeko_tex_100:
+            badges.append("OEKO-TEX Standard 100")
+        if cert.fair_trade:
+            badges.append("Fair Trade Certified")
+        if cert.b_corp:
+            badges.append("Certified B-Corp")
+        if cert.cradle_to_cradle:
+            badges.append("Cradle to Cradle")
+        return badges
+
     @staticmethod
     def generate_passport(
         product_id: str,
@@ -60,6 +89,20 @@ class DPPEngine:
         raw_provenance = f"{product_id}:{brand}:{title}:2026-EU-DPP-COMPLIANT"
         provenance_hash = hashlib.sha256(raw_provenance.encode()).hexdigest()
 
+        co2_val = 4.85
+        water_val = 180.0
+        recycled_val = 30.0
+
+        certs = SustainabilityCertifications(
+            gots_certified=True,
+            oeko_tex_100=True,
+            fair_trade=True,
+            b_corp=True
+        )
+
+        grade = DPPEngine.calculate_sustainability_grade(co2_val, water_val, recycled_val)
+        badges = DPPEngine.extract_certification_badges(certs)
+
         return DigitalProductPassport(
             dpp_id=f"dpp_{product_id}_{provenance_hash[:8]}",
             product_id=product_id,
@@ -67,18 +110,15 @@ class DPPEngine:
             brand_name=brand,
             manufacturing_country="Italy",
             materials=materials,
-            recycled_content_pct=30.0,
-            carbon_footprint_kg_co2e=4.85,
-            water_usage_liters=180.0,  # 80% lower than conventional cotton
+            recycled_content_pct=recycled_val,
+            carbon_footprint_kg_co2e=co2_val,
+            water_usage_liters=water_val,
+            sustainability_grade=grade,
+            certification_badges=badges,
             repairability_score=8.7,
             durability_cycles=120,
             recycling_instructions="Disassemble trim hardware; 100% bio-degradable silk fibers suited for chemical regeneration.",
-            certifications=SustainabilityCertifications(
-                gots_certified=True,
-                oeko_tex_100=True,
-                fair_trade=True,
-                b_corp=True
-            ),
+            certifications=certs,
             provenance_hash=provenance_hash,
             verification_qr_uri=f"https://passport.fashion-marketplace.com/verify/{product_id}?hash={provenance_hash[:16]}"
         )
