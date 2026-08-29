@@ -84,9 +84,18 @@ class CartService:
         if not variant:
             raise NotFoundException("Product variant not found or inactive")
 
+        MAX_ITEM_LIMIT = 20
+
+        if item_in.quantity <= 0:
+            raise BadRequestException("Item quantity must be greater than zero")
+        if item_in.quantity > MAX_ITEM_LIMIT:
+            raise BadRequestException(f"Maximum quantity allowed per item is {MAX_ITEM_LIMIT} units")
+
         # Check existing item in cart
         existing_item = next((item for item in cart.items if item.variant_id == item_in.variant_id), None)
         if existing_item:
+            if existing_item.quantity + item_in.quantity > MAX_ITEM_LIMIT:
+                raise BadRequestException(f"Total quantity for this item in cart cannot exceed {MAX_ITEM_LIMIT} units")
             existing_item.quantity += item_in.quantity
             existing_item.unit_price = variant.price
         else:
@@ -112,6 +121,8 @@ class CartService:
 
         if quantity <= 0:
             await db.delete(item)
+        elif quantity > 20:
+            raise BadRequestException("Maximum quantity allowed per item is 20 units")
         else:
             item.quantity = quantity
 
