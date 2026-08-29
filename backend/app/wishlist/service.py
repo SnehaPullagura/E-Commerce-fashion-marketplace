@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 
-from app.core.exceptions import NotFoundException, ConflictException
+from app.core.exceptions import NotFoundException, ConflictException, BadRequestException
 from app.products.models import Product, ProductVariant
 from app.cart.models import Cart, CartItem
 from app.cart.service import CartService
@@ -66,23 +66,32 @@ class WishlistService:
     @staticmethod
     async def move_to_cart(db: AsyncSession, user_id: str, product_id: str, variant_id: str) -> None:
         cart = await CartService.get_or_create_cart(db, user_id=user_id)
-        # Add to cart
+        
+        # Validate variant
         var_stmt = select(ProductVariant).where(ProductVariant.id == variant_id)
         var_res = await db.execute(var_stmt)
         variant = var_res.scalar_one_or_none()
         if not variant:
             raise NotFoundException("Variant not found")
+        if not variant.is_active:
+            raise BadRequestException("Selected variant is currently inactive or out of stock")
 
-        cart_item = CartItem(
-            cart_id=cart.id,
-            product_id=variant.product_id,
-            variant_id=variant.id,
-            quantity=1,
-            selected_size=variant.size,
-            selected_color=variant.color_name,
-            unit_price=variant.price
-        )
-        db.add(cart_item)
+        # Check if item variant already in cart
+        existing_item = next((item for item in cart.items if item.variant_id == variant_id), None)
+        if existing_item:
+            existing_item.quantity += 1
+            existing_item.unit_price = variant.price
+        else:
+            cart_item = CartItem(
+                cart_id=cart.id,
+                product_id=variant.product_id,
+                variant_id=variant.id,
+                quantity=1,
+                selected_size=variant.size,
+                selected_color=variant.color_name,
+                unit_price=variant.price
+            )
+            db.add(cart_item)
 
         # Remove from wishlist
         wishlist = await WishlistService.get_or_create_wishlist(db, user_id)
