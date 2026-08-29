@@ -18,6 +18,7 @@ from app.admin.router import router as admin_router
 from app.recommendations.router import router as recommendations_router
 from app.analytics.router import router as analytics_router
 from app.styling.router import router as styling_router
+from app.commerce.flash_live_router import router as flash_live_router
 
 api_router = APIRouter()
 
@@ -35,12 +36,13 @@ api_router.include_router(cart_router)
 api_router.include_router(wishlist_router)
 api_router.include_router(coupons_router)
 
-# Commerce Engine
+# Commerce & Live Streaming Engine
 api_router.include_router(orders_router)
 api_router.include_router(payments_router)
 api_router.include_router(shipping_router)
 api_router.include_router(reviews_router)
 api_router.include_router(inventory_router)
+api_router.include_router(flash_live_router)
 
 # Marketplace & Governance
 api_router.include_router(vendors_router)
