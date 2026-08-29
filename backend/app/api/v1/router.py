@@ -20,6 +20,7 @@ from app.analytics.router import router as analytics_router
 from app.styling.router import router as styling_router
 from app.commerce.flash_live_router import router as flash_live_router
 from app.sustainability.router import router as sustainability_router
+from app.shipping.omnichannel_router import router as omnichannel_router
 
 api_router = APIRouter()
 
@@ -44,6 +45,7 @@ api_router.include_router(shipping_router)
 api_router.include_router(reviews_router)
 api_router.include_router(inventory_router)
 api_router.include_router(flash_live_router)
+api_router.include_router(omnichannel_router)
 
 # Marketplace & Governance
 api_router.include_router(vendors_router)
