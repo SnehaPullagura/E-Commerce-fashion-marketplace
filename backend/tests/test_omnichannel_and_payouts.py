@@ -44,6 +44,16 @@ async def test_vendor_escrow_settlement():
     assert settlement["net_payable"] == 1275.0        # 1500 - 150 - 75
     assert settlement["ledger_current_balance"] >= 1275.0
 
+    # Test reserve release
+    rel_res = escrow_engine.release_rolling_reserve("vend_atelier_roma", amount=25.0)
+    assert rel_res["released_amount"] == 25.0
+    assert rel_res["remaining_reserve_held"] == 50.0
+
+    # Test payout disbursement
+    disburse_res = escrow_engine.request_payout_disbursement("vend_atelier_roma", amount=500.0)
+    assert disburse_res["disbursed_amount"] == 500.0
+    assert disburse_res["lifetime_payouts_total"] >= 500.0
+
 
 @pytest.mark.asyncio
 async def test_logistics_and_payout_api_endpoints():

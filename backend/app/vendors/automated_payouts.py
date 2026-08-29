@@ -87,6 +87,77 @@ class VendorEscrowSettlementEngine:
             "ledger_current_balance": ledger["available_balance"]
         }
 
+    def release_rolling_reserve(self, vendor_id: str, amount: Optional[float] = None) -> Dict[str, Any]:
+        ledger = self.get_or_create_ledger(vendor_id)
+        current_held = ledger["rolling_reserve_held"]
+        release_amt = current_held if amount is None else min(amount, current_held)
+        release_amt = round(release_amt, 2)
+
+        ledger["rolling_reserve_held"] = round(current_held - release_amt, 2)
+        ledger["available_balance"] = round(ledger["available_balance"] + release_amt, 2)
+
+        release_id = f"rel_{uuid.uuid4().hex[:10]}"
+        record = {
+            "release_id": release_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "amount_released": release_amt,
+            "remaining_reserve": ledger["rolling_reserve_held"],
+            "new_available_balance": ledger["available_balance"]
+        }
+        ledger["payout_history"].append(record)
+
+        return {
+            "release_id": release_id,
+            "vendor_id": vendor_id,
+            "released_amount": release_amt,
+            "remaining_reserve_held": ledger["rolling_reserve_held"],
+            "available_balance": ledger["available_balance"]
+        }
+
+    def request_payout_disbursement(
+        self,
+        vendor_id: str,
+        amount: Optional[float] = None,
+        withdrawal_method: str = "WIRE"
+    ) -> Dict[str, Any]:
+        ledger = self.get_or_create_ledger(vendor_id)
+        available = ledger["available_balance"]
+        disburse_amt = available if amount is None else amount
+
+        if disburse_amt <= 0:
+            raise ValueError("Disbursement amount must be greater than zero")
+        if disburse_amt > available:
+            raise ValueError(f"Insufficient available balance. Requested {disburse_amt}, available: {available}")
+        if disburse_amt < 50.0:
+            raise ValueError("Minimum payout disbursement threshold is 50.00 USD")
+
+        disburse_amt = round(disburse_amt, 2)
+        ledger["available_balance"] = round(available - disburse_amt, 2)
+        ledger["total_lifetime_payouts"] = round(ledger["total_lifetime_payouts"] + disburse_amt, 2)
+
+        payout_tx_id = f"tx_payout_{uuid.uuid4().hex[:12]}"
+        record = {
+            "payout_tx_id": payout_tx_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "disbursed_amount": disburse_amt,
+            "withdrawal_method": withdrawal_method,
+            "remaining_balance": ledger["available_balance"],
+            "status": "DISBURSED"
+        }
+        ledger["payout_history"].append(record)
+
+        return {
+            "payout_tx_id": payout_tx_id,
+            "vendor_id": vendor_id,
+            "disbursed_amount": disburse_amt,
+            "withdrawal_method": withdrawal_method,
+            "remaining_balance": ledger["available_balance"],
+            "lifetime_payouts_total": ledger["total_lifetime_payouts"]
+        }
+
+    def get_ledger_summary(self, vendor_id: str) -> Dict[str, Any]:
+        return self.get_or_create_ledger(vendor_id)
+
 
 # Singleton settlement engine
 escrow_engine = VendorEscrowSettlementEngine()
