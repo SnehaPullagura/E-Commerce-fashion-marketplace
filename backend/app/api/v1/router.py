@@ -19,6 +19,7 @@ from app.recommendations.router import router as recommendations_router
 from app.analytics.router import router as analytics_router
 from app.styling.router import router as styling_router
 from app.commerce.flash_live_router import router as flash_live_router
+from app.sustainability.router import router as sustainability_router
 
 api_router = APIRouter()
 
@@ -55,3 +56,4 @@ api_router.include_router(styling_router)
 
 # Business Intelligence & Analytics
 api_router.include_router(analytics_router)
+api_router.include_router(sustainability_router)
