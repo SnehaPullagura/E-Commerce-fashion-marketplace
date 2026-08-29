@@ -75,3 +75,18 @@ def decode_token(token: str) -> Optional[Dict[str, Any]]:
         return payload
     except jwt.PyJWTError:
         return None
+
+
+def validate_token(token: str) -> Dict[str, Any]:
+    from app.core.exceptions import UnauthorizedException
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise UnauthorizedException("Authentication token has expired")
+    except jwt.InvalidTokenError:
+        raise UnauthorizedException("Invalid authentication token")
