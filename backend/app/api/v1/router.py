@@ -21,12 +21,14 @@ from app.styling.router import router as styling_router
 from app.commerce.flash_live_router import router as flash_live_router
 from app.sustainability.router import router as sustainability_router
 from app.shipping.omnichannel_router import router as omnichannel_router
+from app.applications.router import router as applications_router
 
 api_router = APIRouter()
 
 # Core Authentication & Users
 api_router.include_router(auth_router)
 api_router.include_router(users_router)
+api_router.include_router(applications_router)
 
 # Fashion Catalog & Discovery
 api_router.include_router(categories_router)

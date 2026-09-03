@@ -70,6 +70,16 @@ class ConflictException(AppException):
         )
 
 
+class ValidationException(AppException):
+    def __init__(self, message: str = "Validation failed", details: Optional[Dict[str, Any]] = None):
+        super().__init__(
+            message=message,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            code="VALIDATION_ERROR",
+            details=details
+        )
+
+
 async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
     return JSONResponse(
         status_code=exc.status_code,
